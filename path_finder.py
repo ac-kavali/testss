@@ -3,15 +3,15 @@ from typing import Optional
 
 # Wall bit masks
 NORTH = 1  # bit 0
-EAST  = 2  # bit 1
+EAST = 2  # bit 1
 SOUTH = 4  # bit 2
-WEST  = 8  # bit 3
+WEST = 8  # bit 3
 
-# Direction vectors: (dr, dc) and the wall bit to check in current cell
+# Direction vectors: (dr, dc, wall bit to check in current cell)
 DIRECTIONS = {
     'N': (-1, 0, NORTH),
-    'E': (0,  1, EAST),
-    'S': (1,  0, SOUTH),
+    'E': (0, 1, EAST),
+    'S': (1, 0, SOUTH),
     'W': (0, -1, WEST),
 }
 
@@ -25,10 +25,10 @@ def bfs(
     BFS shortest path on a maze grid encoded with 4-bit wall values.
 
     Args:
-        grid:  2D list of ints; each cell is a 4-bit mask where
-               1=North wall closed, 2=East, 4=South, 8=West.
+        grid: 2D list of ints; each cell is a 4-bit mask where
+              1=North wall closed, 2=East, 4=South, 8=West.
         start: (row, col) of the entry cell.
-        end:   (row, col) of the exit cell.
+        end: (row, col) of the exit cell.
 
     Returns:
         List of direction letters ['N','E','S','W'] representing the

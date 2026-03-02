@@ -8,21 +8,21 @@ HEIGHT=10
 
 
 # Entry and exit points (x,y)
-ENTRY=1,1
-EXIT=8,8
+ENTRY=2,2
+EXIT=9,7
+SEED=42
 
 # Output file
-OUTPUT_FILE=maze.txt
+OUTPUT_FILE=output_maze.txt
 
 # Perfect maze (no loops, one unique path)
-PERFECT=False
+PERFECT=True
 
 # ----------------
 # Optional settings
 # ----------------
 
 # Random seed for reproducibility
-SEED=42
 
 # Maze generation algorithm
 # Possible values: DFS, PRIM, KRUSKAL
