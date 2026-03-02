@@ -1,7 +1,5 @@
 """Configuration parsing and validation for maze generator."""
 
-from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
@@ -40,22 +38,15 @@ def parse_coord(value: str, key_name: str) -> Tuple[int, int]:
     try:
         x, y = value.split(",", 1)
         return int(x.strip()), int(y.strip())
-    except ValueError as exc:
-        raise ConfigError(f"{key_name} must be in format x,y") from exc
+    except ValueError:
+        raise ConfigError(f"{key_name} must be in format x,y")
 
 
 def parse_config(file_name: str) -> Config:
     """Parse the config file and return a Config object."""
 
     confs: dict[str, str] = {}
-    required = {
-        "width",
-        "height",
-        "entry",
-        "exit",
-        "output_file",
-        "perfect",
-    }
+    required = {"width", "height", "entry", "exit", "output_file", "perfect"}
 
     try:
         with open(file_name, "r", encoding="utf-8") as file:
@@ -67,18 +58,12 @@ def parse_config(file_name: str) -> Config:
 
                 if "=" not in line:
                     raise ConfigError(f"Line {line_num}: missing '='")
-
                 key, value = line.split("=", 1)
                 confs[key.lower().strip()] = value.strip()
-
-    except FileNotFoundError as exc:
-        raise ConfigError(
-            f"Config file not found: {file_name}"
-        ) from exc
-    except OSError as exc:
-        raise ConfigError(
-            f"Failed to read config file: {file_name}"
-        ) from exc
+    except FileNotFoundError:
+        raise ConfigError(f"Config file not found: {file_name}")
+    except OSError:
+        raise ConfigError(f"Failed to read config file: {file_name}")
 
     missing = required - confs.keys()
     if missing:
@@ -88,13 +73,11 @@ def parse_config(file_name: str) -> Config:
     try:
         width = int(confs["width"])
         height = int(confs["height"])
-    except ValueError as exc:
-        raise ConfigError(
-            "WIDTH and HEIGHT must be integers"
-        ) from exc
+    except ValueError:
+        raise ConfigError("WIDTH and HEIGHT must be integers")
 
-    if width <= 1 or height <= 1:
-        raise ConfigError("WIDTH and HEIGHT must be > 1")
+    if width < 9 or height < 7:
+        raise ConfigError("WIDTH and HEIGHT must be in range width >= 9 and height >= 7")
 
     entry = parse_coord(confs["entry"], "ENTRY")
     ex_it = parse_coord(confs["exit"], "EXIT")
@@ -112,8 +95,8 @@ def parse_config(file_name: str) -> Config:
     if "seed" in confs:
         try:
             seed = int(confs["seed"])
-        except ValueError as exc:
-            raise ConfigError("SEED must be an integer") from exc
+        except ValueError:
+            raise ConfigError("SEED must be an integer")
 
     for name, (x, y) in {"ENTRY": entry, "EXIT": ex_it}.items():
         if not (0 <= x < width and 0 <= y < height):
