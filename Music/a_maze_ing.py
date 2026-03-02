@@ -9,9 +9,19 @@ from maze_generator import generate_maze
 from path_finder import bfs
 
 # The Function That Manage The Interactive Menu
-def main_menu(maze):
-     print_ascii_maze(maze)
-     while True:
+def main_menu(maze, ENTRY, EXIT, output_file):
+    print_ascii_maze(maze)
+    path = bfs(maze, ENTRY, EXIT)
+    print(f"\nPath of the maze: {path}")
+    str_path = "".join(path)
+    organize_output_file(
+        maze,
+        output_file,
+        str_path,
+        ENTRY,
+        EXIT
+    )
+    while True:
         print("\n=== Main Menu ===")
         print("1. Re-generate a new maze")
         print("2. Show/Hide path from entry to exit")
@@ -20,14 +30,14 @@ def main_menu(maze):
 
         try:
             choice = input("Enter your choice (1-3): ").strip()
-        except KeyboardInterrupt:
-            print("\nDetected Ctrl+C! Exiting gracefully...")
+        except BaseException :
+            print("\nDetected Key Enterruption Exiting gracefully...")
             exit(0)
 
         if choice == "1":
             print("Maze re-generation started...")
             maze = generate_maze() # here is the maze 2d list of ints represented
-            # print_maze(maze) do you fucking work here
+            # print_maze(maze) do your fucking work here
         elif choice == "2":
             pass # also this is your fucking work
         elif choice == "3":
@@ -101,16 +111,4 @@ if __name__ == "__main__":
 
     print(f"Generating {WIDTH}x{HEIGHT} {maze_nature} (seed={SEED})...\n")
     maze = generate_maze(WIDTH, HEIGHT, seed=SEED, perfect=PERFECT)
-
-    main_menu(maze)
-    path = bfs(maze, ENTRY, EXIT)
-
-    organize_output_file(
-        maze,
-        output_file,
-        "".join(path),
-        ENTRY,
-        EXIT,
-    )
-
-    print(f"\nPath of the maze: {path}")
+    main_menu(maze, ENTRY, EXIT, output_file)

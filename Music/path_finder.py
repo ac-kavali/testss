@@ -34,6 +34,11 @@ def bfs(
         List of direction letters ['N','E','S','W'] representing the
         shortest path, or None if no path exists.
     """
+    # swap x,y into y,x because i used the algo this way row, coll
+    t = (start[1], start[0])
+    start = t
+    t = (end[1], end[0])
+    end = t
     rows = len(grid)
     cols = len(grid[0])
 
