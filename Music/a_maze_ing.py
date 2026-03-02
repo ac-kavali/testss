@@ -11,13 +11,13 @@ from path_finder import bfs
 # The Function That Manage The Interactive Menu
 def main_menu(maze, ENTRY, EXIT, output_file):
     print_ascii_maze(maze)
-    path = bfs(maze, ENTRY, EXIT)
+    path : list[str] = bfs(maze, ENTRY, EXIT)
     print(f"\nPath of the maze: {path}")
-    str_path = "".join(path)
+
     organize_output_file(
         maze,
         output_file,
-        str_path,
+        "".join(path),
         ENTRY,
         EXIT
     )
