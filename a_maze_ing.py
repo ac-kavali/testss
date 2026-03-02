@@ -1,11 +1,14 @@
+"""
+This is the main program of the a-maze-ing project
+"""
 import sys
 
 from print_maze import print_ascii_maze
 from config import parse_config
-from maze_generator import generate_maze, entry_exit_in_42
+from maze_generator import generate_maze
 from path_finder import bfs
 
-
+# The Function That Manage The Interactive Menu
 def main_menu(maze):
      print_ascii_maze(maze)
      while True:
@@ -24,11 +27,14 @@ def main_menu(maze):
         if choice == "1":
             print("Maze re-generation started...")
             maze = generate_maze() # here is the maze 2d list of ints represented
-            # print_maze(maze)
+            # print_maze(maze) do you fucking work here
         elif choice == "2":
-            pass
+            pass # also this is your fucking work
         elif choice == "3":
-            print("Goodbye!")
+            pass
+            # also this is your fucking role idiot
+        elif choice == "4":
+            print("Goodbye!") # let me do this.
             break
         else:
             print("Invalid choice. Try again.")

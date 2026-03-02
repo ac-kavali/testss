@@ -1,0 +1,6 @@
+.idea
+__pychache__
+conf.txt
+config.txt
+output_maze.txt
+print_maze.py
