@@ -16,7 +16,7 @@ run:
 	@if [ -z "$(CONFIG)" ]; then \
 		echo "Error: No config .txt file found."; \
 	fi
-	python3 a_maze_ing.py $(CONFIG)
+	python3 $(MAIN) $(CONFIG)
 
 debug:
 	@if [ -z "$(CONFIG)" ]; then \
@@ -34,6 +34,6 @@ clean:
 	find . -type f -name "*.pyc" -delete
 
 # Rebuild everything
-re: clean install
+re: clean
 
 .PHONY: all run lint clean re
