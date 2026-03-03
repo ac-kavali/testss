@@ -39,6 +39,7 @@ def bfs(
     start = t
     t = (end[1], end[0])
     end = t
+
     rows = len(grid)
     cols = len(grid[0])
 
