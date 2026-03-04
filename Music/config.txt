@@ -3,13 +3,13 @@
 # ================================
 
 # Maze dimensions
-WIDTH=10
-HEIGHT=10
+WIDTH=25
+HEIGHT=20
 
 
 # Entry and exit points (x,y)
-ENTRY=3,0
-EXIT=0,9
+ENTRY=0,0
+EXIT=24,19
 
 # Output file
 OUTPUT_FILE=maze.txt
@@ -22,8 +22,10 @@ PERFECT=True
 # ----------------
 
 # Random seed for reproducibility
-SEED=42
 
+# Maze generation algorithm
+# Possible values: DFS, PRIM, KRUSKAL
+ALGORITHM=DFS
 
 # Display mode: ASCII or NONE
 DISPLAY=ASCII
