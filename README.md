@@ -114,18 +114,14 @@ ALGORITHM=PRIM
 
 ---
 
-## Maze Generation Algorithm
+## Maze Generation Algorithms
 
 Two algorithms are implemented:
 
-- **Prim's Algorithm** — starts from a random cell, grows the maze by repeatedly picking a random wall from a frontier list, and carves through it if the target cell is unvisited.
-- **DFS (Depth-First Search)** — starts from a random cell and recursively carves into random unvisited neighbors, backtracking when stuck.
+- **Prim's Algorithm** — starts from a random cell, grows the maze by repeatedly picking a random wall from a frontier list, and carves through it if the target cell is unvisited. Tends to produce mazes with many short dead-ends and a uniform texture.
+- **DFS (Depth-First Search)** — starts from a random cell and recursively carves into random unvisited neighbors, backtracking when stuck. Tends to produce mazes with long winding corridors.
 
-**Why these algorithms?**
-
-- Both naturally produce **perfect mazes** (a spanning tree of all cells with no loops and no isolated regions).
-- Both are straightforward to make **reproducible** by seeding Python's `random` module.
-- Prim tends to produce mazes with many short dead-ends and a more uniform texture; DFS tends to produce mazes with long winding corridors — offering visual variety.
+Both naturally produce **perfect mazes** (a spanning tree of all cells with no loops and no isolated regions), and both are reproducible by seeding Python's `random` module.
 
 ---
 
@@ -162,20 +158,10 @@ path = gen.solve(entry, exit_) # returns the solution path string
 
 - [Randomized Prim's Algorithm — Maze generation (Wikipedia)](https://en.wikipedia.org/wiki/Maze_generation_algorithm#Randomized_Prim's_algorithm)
 - [Depth-First Search maze generation (Wikipedia)](https://en.wikipedia.org/wiki/Maze_generation_algorithm#Randomized_depth-first_search)
+- [Python `collections.deque` (BFS)](https://docs.python.org/3/library/collections.html#collections.deque)
 - [Python `typing` module docs](https://docs.python.org/3/library/typing.html)
 - [mypy — optional static typing for Python](https://mypy.readthedocs.io/)
 - [flake8 — Python style guide enforcement](https://flake8.pycqa.org/)
-- [Python `collections.deque` (BFS)](https://docs.python.org/3/library/collections.html#collections.deque)
-
-### How AI Was Used
-
-AI (Claude) was used for:
-- Generating the initial README skeleton and structure.
-- Checklisting project requirements against the subject PDF.
-- Suggesting refactoring patterns for the config parser and the display buffer logic.
-- Reviewing docstrings and type annotations for clarity.
-
-All algorithms, data structures, and core logic were designed and implemented by the team.
 
 ---
 
