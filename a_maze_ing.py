@@ -1,52 +1,52 @@
-"""
-This is the main program of the a-maze-ing project
-"""
+import os
 import sys
+from typing import List, Tuple
 
-from print_maze import print_ascii_maze
-from config import parse_config
-from maze_generator import generate_maze
-from path_finder import bfs
+from config import ConfigError, parse_config, set_42_limits
+from display import ADDI, animate_path_walk, print_ascii_maze
+from mazegen import MazeGenerator, bfs
 
-# The Function That Manage The Interactive Menu
-def main_menu(maze):
-     print_ascii_maze(maze)
-     while True:
-        print("\n=== Main Menu ===")
-        print("1. Re-generate a new maze")
-        print("2. Show/Hide path from entry to exit")
-        print("3. Rotate maze colors")
-        print("4. Quit")
 
-        try:
-            choice = input("Enter your choice (1-3): ").strip()
-        except KeyboardInterrupt:
-            print("\nDetected Ctrl+C! Exiting gracefully...")
-            exit(0)
-
-        if choice == "1":
-            print("Maze re-generation started...")
-            maze = generate_maze() # here is the maze 2d list of ints represented
-            # print_maze(maze) do you fucking work here
-        elif choice == "2":
-            pass # also this is your fucking work
-        elif choice == "3":
-            pass
-            # also this is your fucking role idiot
-        elif choice == "4":
-            print("Goodbye!") # let me do this.
-            break
-        else:
-            print("Invalid choice. Try again.")
-
-# Create The Output File With Required Elements (maze hex, entry, exit, )
 def organize_output_file(
-    grid: list[list[int]],
+    grid: List[List[int]],
     output_file: str,
     path: str,
-    entry: tuple[int, int],
-    exit_: tuple[int, int],
-) -> None:
+    entry: Tuple[int, int],
+    exit_: Tuple[int, int],
+) -> bool:
+    """Write the maze and metadata to the output file.
+
+    Args:
+        grid: Generated maze grid.
+        output_file: Path of the file where the maze will be written.
+        path: Path from entry to exit encoded as a string.
+        entry: Entry coordinate.
+        exit_: Exit coordinate.
+
+    Returns:
+        True if the file was successfully written, False otherwise.
+    """
+    if os.path.exists(output_file):
+        while True:
+            print("1. to overwrite the content of the file")
+            print("2. to cancel the process")
+            try:
+                choice = input(
+                    f"The file '{output_file}' already exists. "
+                    "Choose an option: "
+                ).strip()
+            except KeyboardInterrupt:
+                print("\nDetected interruption. Exiting gracefully...")
+                return False
+
+            if choice == "1":
+                break
+            if choice == "2":
+                print("Operation cancelled. The file was not modified.")
+                return False
+
+            print("Invalid input. Please enter 1 or 2.")
+
     content = ""
 
     for row in grid:
@@ -55,62 +55,136 @@ def organize_output_file(
         content += "\n"
 
     try:
-        with open(output_file, "w") as file:
+        with open(output_file, "w", encoding="utf-8") as file:
             file.write(content)
             file.write(f"\n{entry[0]},{entry[1]}\n")
             file.write(f"{exit_[0]},{exit_[1]}\n")
             file.write(path)
+            file.write("\n")
+
     except PermissionError:
-        print("You don't have permission to write to this file.")
+        print(f"You don't have permission to write to {output_file}")
+        return False
+    except IsADirectoryError:
+        print(f"{output_file} is a directory.")
+        return False
+    except OSError as err:
+        print(
+            "An unexpected operating system error occurred "
+            f"while writing to {output_file}: {err}"
+        )
+        return False
+
+    return True
 
 
-def create_entry_exit(grid, height, width):
-    grid[0][0] &= ~1
-    grid[height - 1][width - 1] &= ~4
+def main() -> None:
+    """Main entry point of the maze generator program."""
+    try:
+        if len(sys.argv) != 2:
+            print("Usage: python3 a_maze_ing.py config.txt")
+            sys.exit(1)
+
+        file_name = sys.argv[1]
+
+        if not file_name.lower().endswith(".txt"):
+            raise ConfigError("file_name must end with .txt")
+
+        config = parse_config(file_name)
+
+        width = config.width
+        height = config.height
+        entry = config.entry
+        exit_ = config.exit_
+        perfect = config.perfect
+        seed = config.seed
+        output_file = config.output_file
+        algo = config.algorithm if config.algorithm is not None else "PRIM"
+
+        add_vars = ADDI(False, False, False, False)
+        safe = set_42_limits(width, height)
+
+        generator = MazeGenerator(width, height, seed, perfect, algo)
+
+        maze = generator.generate()
+
+        path_out_list = bfs(maze, entry, exit_)
+        if path_out_list is None:
+            print("No path found")
+            sys.exit(0)
+
+        path = generator.solve(entry, exit_)
+
+        if not organize_output_file(
+            maze,
+            output_file,
+            "".join(path_out_list),
+            entry,
+            exit_,
+        ):
+            sys.exit(0)
+
+        print_ascii_maze(maze, safe, add_vars, config, path)
+
+        while True:
+            print("\n=== Main Menu ===")
+            print("1. Re-generate a new maze")
+            print("2. Show/Hide path from entry to exit")
+            print("3. Animate the maze")
+            print("4. Animate path")
+            print("5. Change maze color")
+            print("6. Quit")
+
+            try:
+                choice = input("Enter your choice (1-6): ").strip()
+            except KeyboardInterrupt:
+                print("\nDetected interruption. Exiting gracefully...")
+                sys.exit(0)
+
+            if choice == "1":
+                print("Maze re-generation started...")
+                generator.seed = None
+                maze = generator.generate()
+                path = generator.solve(entry, exit_)
+                print_ascii_maze(maze, safe, add_vars, config, path)
+
+            elif choice == "2":
+                add_vars.path_check = not add_vars.path_check
+                print_ascii_maze(maze, safe, add_vars, config, path)
+
+            elif choice == "3":
+                add_vars.animation_check = not add_vars.animation_check
+                print_ascii_maze(maze, safe, add_vars, config, path)
+
+            elif choice == "4":
+                add_vars.path_check = False
+                animate_path_walk(
+                    maze,
+                    safe,
+                    add_vars,
+                    config,
+                    path,
+                    delay=0.3,
+                )
+
+            elif choice == "5":
+                add_vars.color_check = True
+                add_vars.color_42_check = True
+                add_vars.animation_check = True
+                print_ascii_maze(maze, safe, add_vars, config, path)
+
+            elif choice == "6":
+                print("Goodbye!")
+                break
+
+            else:
+                print("Invalid choice. Try again.")
+
+    except ConfigError as err:
+        print(err)
+    except Exception as err:
+        print(f"Unexpected error: {err}")
 
 
 if __name__ == "__main__":
-
-    # Check that just one argument is given in command line.
-    if len(sys.argv) != 2:
-        print("Usage: python3 a_maze_ing.py config.txt")
-        sys.exit(1)
-
-    try:
-        config_file = sys.argv[1]
-    except IndexError:
-        print("Usage: python3 a_maze_ing.py config.txt")
-        sys.exit(1)
-
-    try:
-        config = parse_config(config_file)
-    except Exception as e:
-        print(f"Config error: {e}")
-        sys.exit(1)
-
-    WIDTH = config.width
-    HEIGHT = config.height
-    ENTRY = config.entry
-    EXIT = config.exit
-    PERFECT = config.perfect
-    SEED = config.seed
-    output_file = config.output_file
-
-    maze_nature = "Perfect" if PERFECT else "Imperfect"
-
-
-    print(f"Generating {WIDTH}x{HEIGHT} {maze_nature} (seed={SEED})...\n")
-    maze = generate_maze(WIDTH, HEIGHT, seed=SEED, perfect=PERFECT)
-
-    main_menu(maze)
-    path = bfs(maze, ENTRY, EXIT)
-
-    organize_output_file(
-        maze,
-        output_file,
-        "".join(path),
-        ENTRY,
-        EXIT,
-    )
-
-    print(f"\nPath of the maze: {path}")
+    main()
