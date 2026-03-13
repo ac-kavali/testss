@@ -181,10 +181,8 @@ All algorithms, data structures, and core logic were designed and implemented by
 
 ## Team and Project Management
 
-| | |
-|---|---|
-| **Roles** | *(fill in — e.g., wkerdad: maze generation & CLI; achahi: display & config parsing)* |
-| **Planning** | *(fill in — e.g., week 1: core generator; week 2: display + solver; week 3: integration & testing)* |
-| **What worked well** | *(fill in)* |
-| **What could be improved** | *(fill in)* |
-| **Tools used** | *(fill in — e.g., Git, VS Code, mypy, flake8, pytest)* |
+| Wkerdad                             | Achahi                                 |
+| ----------------------------------- | -------------------------------------- |
+| Config Parsing                      | Maze Generation Using Prim's Algorithm |
+| Maze Generation Using DFS algorithm | Path Solving using BFS algorithm       |
+| Maze Terminal Print                 | Makefile And final organization        |
